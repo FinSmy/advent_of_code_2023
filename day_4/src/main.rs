@@ -1,7 +1,7 @@
 use std::fs;
 use thiserror::Error;
 use regex::Regex;
-use itertools::Itertools;
+//use itertools::Itertools;
 
 #[derive(Error, Debug, PartialEq, Eq)]
 enum PuzzleErr {
@@ -49,20 +49,11 @@ fn parse_input(input_data: &str) /*-> Result<Vec<cards>, PuzzleErr>*/ {
         .lines()
         .map(|l| parse_input_line(l.trim()))
         .map(|l| extract_nums_from_line(l))
+        .flatten()
         .collect();
 
-    // let winnings: Vec<u32> = lines
-    //     .iter()
-        // .split(" | ")
-        // .map(|l| extract_nums_from_line(l))
-        // .flatten_ok()
-        // .remove(0)
-        // .map(|a| println!(a.to_string()));
     for card in cards {
-        match card {
-            Ok(card) => println!("{:?}", card.winning),
-            Err(e) => panic!("Ahhhhhhh"),
-        }
+        println!("{:?}", card.winning)
     }
 }
 
