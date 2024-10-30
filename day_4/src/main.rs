@@ -43,7 +43,7 @@ fn parse_input_line(input_line: &str) -> &str {
     parts
 }
 
-fn parse_input(input_data: &str) /*-> Result<Vec<cards>, PuzzleErr>*/ {
+fn parse_input(input_data: &str) -> Vec<Card> {
     let cards: Vec<_> = input_data
         .trim()
         .lines()
@@ -52,13 +52,17 @@ fn parse_input(input_data: &str) /*-> Result<Vec<cards>, PuzzleErr>*/ {
         .flatten()
         .collect();
 
+    cards
+}
+
+fn get_score(cards: Vec<Card>) {
     let mut score: u32 = 0;
 
     for card in cards {
         let mut num_of_wins: u32 = 0;
         for winning_num in card.winning {
             if card.chosen.contains(&winning_num) {
-                num_of_wins = (num_of_wins + 1);
+                num_of_wins = num_of_wins + 1;
             }
         }
 
@@ -69,8 +73,37 @@ fn parse_input(input_data: &str) /*-> Result<Vec<cards>, PuzzleErr>*/ {
     println!("Total score = {}", score);
 }
 
+fn get_total_scratchcards(cards: Vec<Card>) {
+    let mut unchecked: Vec<usize> = vec![1; cards.len()];
+    let mut checked: Vec<usize> = vec![0; cards.len()];
+
+    for (idx, card) in cards.iter().enumerate() {
+        while !(unchecked[idx] == 0) {
+            let mut num_of_wins: usize = 0;
+            for winning_num in &card.winning {
+                if card.chosen.contains(&winning_num) {
+                    num_of_wins = num_of_wins + 1;
+                }
+            }
+
+            for copy_added in 1..num_of_wins+1 {
+                unchecked[idx + copy_added] += 1;
+            }
+            unchecked[idx] = unchecked[idx] - 1;
+            checked[idx] = checked[idx] + 1;
+        }
+    }
+    println!("Total number of scratchcards = {}", checked.iter().fold(0, |sum, i| sum + *i));
+}
+
 fn puzzle_1(input: &str) /*-> Result<i32 , PuzzleErr>*/ {
-    let _cards = parse_input(input);
+    let cards = parse_input(input);
+    get_score(cards);
+}
+
+fn puzzle_2(input: &str) {
+    let cards = parse_input(input);
+    get_total_scratchcards(cards);
 }
 
 fn main() {
@@ -79,9 +112,6 @@ fn main() {
     let file = fs::read_to_string("./input.txt").unwrap();
 
     puzzle_1(&file);
-    // let answer_1 = puzzle_1(&file);
-    // match answer_1 {
-    //     Ok(x) => println!("Puzzle 1 answer {}", x),
-    //     Err(e) => panic!("No solution found for puzzle_1: {}.", e),
-    // }
+
+    puzzle_2(&file);
 }
