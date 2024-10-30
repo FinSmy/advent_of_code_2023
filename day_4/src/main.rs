@@ -28,13 +28,13 @@ fn extract_nums_from_line(line: &str) -> Result<Card, PuzzleErr> {
         }
     }
 
-    if !!(num_comps == 0) {
+    if !(num_comps == 0) {
         nums.push(num_comps);
     }
 
     Ok(Card {
-        winning: (nums[0..5].to_vec()),
-        chosen: (nums[5..].to_vec()),
+        winning: (nums[0..10].to_vec()),
+        chosen: (nums[10..].to_vec()),
     })
 }
 
@@ -52,9 +52,21 @@ fn parse_input(input_data: &str) /*-> Result<Vec<cards>, PuzzleErr>*/ {
         .flatten()
         .collect();
 
+    let mut score: u32 = 0;
+
     for card in cards {
-        println!("{:?}", card.winning)
+        let mut num_of_wins: u32 = 0;
+        for winning_num in card.winning {
+            if card.chosen.contains(&winning_num) {
+                num_of_wins = (num_of_wins + 1);
+            }
+        }
+
+        if num_of_wins > 0 {
+            score = score + 2_u32.pow(num_of_wins - 1);
+        }
     }
+    println!("Total score = {}", score);
 }
 
 fn puzzle_1(input: &str) /*-> Result<i32 , PuzzleErr>*/ {
