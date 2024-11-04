@@ -1,39 +1,61 @@
 use regex::Regex;
 use std::fs;
 
-fn extract_numbers(lines: &str) {
-    let Some(numbers_re) = Regex::new(r"(\d+)").unwrap().captures(lines) else {
-        return;
-    };
+struct Map {
+    dest: Vec<u32>,
+    source: Vec<u32>,
+    range: Vec<u32>,
+}
 
-    println!("{:?}", numbers_re.extract());
+fn extract_seeds(lines: &str) -> Vec<u32> {
+    let numbers_re = Regex::new(r"(\d+)").unwrap();
+    let captures = numbers_re.captures_iter(lines);
 
-    /*
-    for (_, substr) in numbers_re {
-        if digit_re.is_match(&c.to_string()) {
-            num_comps = num_comps * 10 + c.to_digit(10).unwrap();
-        } else if !(num_comps == 0) {
-            nums.push(num_comps);
-            num_comps = 0;
-        }
+    let numbers_vec: Vec<_> = captures
+        .map(|c| c.extract::<1>())
+        .map(|(c, _)| c.parse::<u32>().unwrap())
+        .collect();
+
+    println!("{:?}", numbers_vec);
+    numbers_vec
+}
+
+fn get_maps(lines: Vec<&str>) /*-> Vec<Map>*/
+{
+    let block = lines.join("\n");
+    let vec_of_map_lines: Vec<&str> = block.split("\n\n").skip(1).collect();
+    //println!("map lines: {:?}", vec_of_map_lines);
+
+    let digit_re = Regex::new(r"(\d+)[.|\\n]?(\d+)[.|\\n]?(\d+)").unwrap();
+    let mut maps = Vec::new();
+
+    for line in vec_of_map_lines {
+        let mut map = Map {
+            dest: Vec::new(),
+            source: Vec::new(),
+            range: Vec::new(),
+        };
+
+        digit_re.captures_iter(line).map(|caps| {
+            let (_, [dest_cap, source_cap, range_cap]) = caps.extract();
+            map.dest.push(dest_cap.parse::<u32>().unwrap());
+            map.source.push(source_cap.parse::<u32>().unwrap());
+            map.range.push(range_cap.parse::<u32>().unwrap());
+        });
+
+        maps.push(map);
     }
-    */
 }
 
 fn parse_input(input: &str) -> Vec<&str> {
-    let pattern: &str = "seeds";
-    let seeds: Vec<&str> = input
-        .trim()
-        .lines()
-        .filter(|&x| x.contains(pattern))
-        .collect();
-    seeds
+    let lines: Vec<&str> = input.trim().lines().collect();
+    lines
 }
 
 fn puzzle_1(input: &str) {
     let seeds = parse_input(input);
-    println!("Seeds: {:?}", seeds);
-    extract_numbers(seeds[0]);
+    extract_seeds(seeds[0]);
+    get_maps(seeds)
 }
 
 fn main() {
