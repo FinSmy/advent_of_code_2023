@@ -19,27 +19,25 @@ fn extract_seeds(lines: &str) -> Vec<u32> {
     numbers_vec
 }
 
-fn get_maps(lines: Vec<&str>) -> Vec<Map>
-{
-    let block = lines.join("\n");
-    let vec_of_map_lines: Vec<&str> = block.split("\n\n").skip(1).collect();
-    println!("{:?}", vec_of_map_lines);
-    let digit_re = Regex::new(r"(\d+)[\s|\n]?(\d+)[\s|\n]?(\d+)").unwrap();
+fn get_maps(input: &str) -> Vec<Map> {
+    let vec_of_map_lines: Vec<&str> = input.split("\r\n\r\n").collect();
+    let digit_re = Regex::new(r"(?sx)(\d+).?(\d+).?(\d+)").unwrap();
     let mut maps = Vec::new();
 
-    for line in vec_of_map_lines {
+    for line in &vec_of_map_lines[1..] {
         let mut map = Map {
             dest: Vec::new(),
             source: Vec::new(),
             range: Vec::new(),
         };
 
-        digit_re.captures_iter(line).map(|caps| {
-            let (_, [dest_cap, source_cap, range_cap]) = caps.extract();
+        for (_, [dest_cap, source_cap, range_cap]) in
+            digit_re.captures_iter(line).map(|caps| caps.extract())
+        {
             map.dest.push(dest_cap.parse::<u32>().unwrap());
             map.source.push(source_cap.parse::<u32>().unwrap());
             map.range.push(range_cap.parse::<u32>().unwrap());
-        });
+        }
 
         maps.push(map);
     }
@@ -53,17 +51,16 @@ fn parse_input(input: &str) -> Vec<&str> {
 
 fn find_location(seed: u32, maps: &Vec<Map>) {
     for map in maps {
-        for i in 0..map.dest.len() {
-        }
+        for i in 0..map.dest.len() {}
     }
 }
 
 fn puzzle_1(input: &str) {
     let lines = parse_input(input);
     let seeds = extract_seeds(lines[0]);
-    let all_maps = get_maps(lines);
+    let all_maps = get_maps(input);
 
-    for (idx,seed) in seeds.iter().enumerate() {
+    for (idx, seed) in seeds.iter().enumerate() {
         find_location(*seed, &all_maps);
     }
 }
