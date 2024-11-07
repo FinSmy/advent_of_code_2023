@@ -49,10 +49,30 @@ fn parse_input(input: &str) -> Vec<&str> {
     lines
 }
 
-fn find_location(seed: u32, maps: &Vec<Map>) {
+fn find_location(seed: u32, maps: &Vec<Map>) -> u32 {
+    let mut next_input: u32 = seed;
+    let mut map_i = 0;
+
     for map in maps {
-        for i in 0..map.dest.len() {}
+        let mut result: u32 = 0;
+        for i in 0..map.dest.len() {
+            let dest = map.dest[i];
+            let source = map.source[i];
+            let range = map.range[i];
+            result = dest;
+
+            if (next_input >= source) && (next_input < source + range) {
+                result = next_input - source;
+                result = result + dest;
+                break;
+            }
+        }
+        next_input = result;
     }
+    println!("Map: {}, Result: {}", map_i, next_input);
+    map_i += 1;
+    println!("Location: {}", next_input);
+    next_input
 }
 
 fn puzzle_1(input: &str) {
@@ -60,9 +80,14 @@ fn puzzle_1(input: &str) {
     let seeds = extract_seeds(lines[0]);
     let all_maps = get_maps(input);
 
-    for (idx, seed) in seeds.iter().enumerate() {
-        find_location(*seed, &all_maps);
+    let mut locations: Vec<u32> = Vec::new();
+    for seed in seeds {
+        locations.push(find_location(seed, &all_maps));
+        println!("\n\n");
     }
+
+    println!("Locations {:?}", locations);
+    println!("Output: {}", locations.iter().min().unwrap())
 }
 
 fn main() {
