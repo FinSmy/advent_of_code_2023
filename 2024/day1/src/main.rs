@@ -2,12 +2,12 @@ use regex::Regex;
 use std::fs;
 
 fn extract_lists(lines: &str) -> (Vec<i32>, Vec<i32>) {
-    let num_re = Regex::new(r"(?ms)(\d+)\s.*(\d+)").unwrap();
+    let num_re = Regex::new(r"(\d+)[\s|.]*(\d+)").unwrap();
     let mut list1: Vec<i32> = Vec::new();
     let mut list2: Vec<i32> = Vec::new();
 
-    let caps = num_re.captures_iter(lines);
-    for (_, [a, b]) in caps.map(|c| c.extract()) {
+    for line in lines.lines() {
+        let (_, [a, b]) = num_re.captures(line).unwrap().extract();
         list1.push(a.parse::<i32>().unwrap());
         list2.push(b.parse::<i32>().unwrap());
     }
