@@ -29,7 +29,7 @@ fn accumulate_diffs(v1: &Vec<i32>, v2: &Vec<i32>) {
 fn get_similarity_score(v1: Vec<i32>, v2: Vec<i32>) {
     let mut score: usize = 0;
     for i in 0..v1.len() {
-        score += v2.iter().filter(|&x| *x == v1[i]).count().pow(2);
+        score += v2.iter().filter(|&x| *x == v1[i]).count() * v1[i] as usize;
     }
 
     println!("Similarity Score: {}", score);
