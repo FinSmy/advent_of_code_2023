@@ -15,7 +15,7 @@ fn extract_lists(lines: &str) -> (Vec<i32>, Vec<i32>) {
     (list1, list2)
 }
 
-fn accumulate_diffs(v1: Vec<i32>, v2: Vec<i32>) {
+fn accumulate_diffs(v1: &Vec<i32>, v2: &Vec<i32>) {
     let mut total_diffs: i32 = 0;
 
     for i in 0..v1.len() {
@@ -26,12 +26,22 @@ fn accumulate_diffs(v1: Vec<i32>, v2: Vec<i32>) {
     println!("Total difference is : {}", total_diffs);
 }
 
+fn get_similarity_score(v1: Vec<i32>, v2: Vec<i32>) {
+    let mut score: usize = 0;
+    for i in 0..v1.len() {
+        score += v2.iter().filter(|&x| *x == v1[i]).count().pow(2);
+    }
+
+    println!("Similarity Score: {}", score);
+}
+
 fn puzzle_1(input: &str) {
     let (mut list1, mut list2) = extract_lists(input);
     list1.sort();
     list2.sort();
 
-    accumulate_diffs(list1, list2);
+    accumulate_diffs(&list1, &list2);
+    get_similarity_score(list1, list2);
 }
 
 fn main() {
